@@ -13,7 +13,7 @@ class ParkingLot
   }
 
   def self.parking_spots
-    normal_size = ("A".."M").each.with_object({}) do |lot_name, parking_spot|
+    ("A".."M").each.with_object({}) do |lot_name, parking_spot|
       parking_spot[lot_name] = {size: 20, assigned: [], price: 0}
     end.merge(("M".."Z").each_with_object({}) do |lot_name, parking_spot|
       parking_spot[lot_name] = {size: MAX_SPECIAL_SPOT_SIZE, assigned: [], price: 0}
@@ -21,7 +21,8 @@ class ParkingLot
   end
 
   def self.find_parking_spot(vehicles:)
-    new(parking_spots: parking_spots).call(vehicles: Types::Vehicles.for(vehicles))
+    new(parking_spots: parking_spots)
+      .call(vehicles: Types::Vehicles.for(vehicles))
   end
 
   def initialize(parking_spots:)
