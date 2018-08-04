@@ -6,27 +6,33 @@ describe ParkingLot do
       it "returns the first parking spot in which a vehicle can park if any" do
         expect(
           ParkingLot.find_parking_spot(vehicles: [{brand: "Dodge", size: 15}])
-        ).to eql({"A" => {size: 20, price: 50, assigned: [{brand: "Dodge", size: 15}]}})
+        ).to match(
+          {
+            2 => {
+              size: 20,
+              price: 50,
+              assigned: [{brand: "Dodge", size: 15}]
+            },
+          }
+        )
       end
 
       it "returns the parking spots for more than one vehicle" do
         vehicles = [
           {brand: "Dodge", size: 15},
-          {brand: "Mercedes", size: 10},
-          {brand: "Toyota", size: 20},
+          {brand: "Jaguar", size: 45},
         ]
 
         expect(
           ParkingLot.find_parking_spot(vehicles: vehicles)
         ).to eql({
-          "A" => {size: 20, price: 50, assigned: [{brand: "Dodge", size: 15}]},
-          "B"=> {size: 20, price: 100, assigned: [{brand: "Mercedes", size: 10}]},
-          "C"=> {size: 20, price: 15, assigned: [{brand: "Toyota", size: 20}]}
+          2 => {size: 20, price: 50, assigned: [{brand: "Dodge", size: 15}]},
+          5 => {size: 50, price: 170, assigned: [{brand: "Jaguar", size: 45}]},
         })
       end
 
       context "when special spots are available" do
-        it "assigns cars to an special spot depending on the profit" do
+        xit "assigns cars to an special spot depending on the profit" do
           vehicles = [
             {brand: "Dodge", size: 15},
             {brand: "Mercedes", size: 10},

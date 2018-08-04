@@ -9,5 +9,5 @@ gem "dry-struct"
 group :test, :development do
   gem "rspec"
   gem "pry"
-  gem "reek"
+  gem "mutant-rspec"
 end

@@ -13,11 +13,15 @@ class ParkingLot
   }
 
   def self.parking_spots
-    ("A".."M").each.with_object({}) do |lot_name, parking_spot|
-      parking_spot[lot_name] = {size: 20, assigned: [], price: 0}
-    end.merge(("M".."Z").each_with_object({}) do |lot_name, parking_spot|
-      parking_spot[lot_name] = {size: MAX_SPECIAL_SPOT_SIZE, assigned: [], price: 0}
-    end)
+    1.upto(10).each_with_object({}) do |location, spot|
+      spot.merge!({
+        location => {
+          size: location * 10,
+          price: 0,
+          assigned: [],
+        },
+      })
+    end
   end
 
   def self.find_parking_spot(vehicles:)
@@ -50,21 +54,15 @@ class ParkingLot
     parking_spots[spot_name][:price] += PRICES_PER_BRAND[vehicle.brand]
   end
 
-  def unassigned_special_parking_spots
-    unassigned_parking_spots.select do |_, spot|
-      spot[:size] == MAX_SPECIAL_SPOT_SIZE
-    end
-  end
-
   def unassigned_parking_spots
-    parking_spots.select do |_, spot|
-      spot[:assigned].empty?
+    parking_spots.select do |location, spot|
+      spot.fetch(:assigned).empty?
     end
   end
 
   def available_parking_spot_for(spots, vehicle_size)
     spots.find do |name, spot|
-      spot[:size] >= vehicle_size
+      spot.fetch(:size) >= vehicle_size
     end
   end
 
