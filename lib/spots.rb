@@ -75,4 +75,4 @@ class Spots
     end
 
     attr_reader :spots
-  end
+end

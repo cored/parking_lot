@@ -2,7 +2,7 @@ require "dry-struct"
 require_relative "./types"
 require_relative "./spots"
 
-class ParkingLot
+module ParkingLot
   NoAvailableParkingSpot = Class.new(StandardError)
   MAX_SPECIAL_SPOT_SIZE = 50
 
