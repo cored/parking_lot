@@ -20,18 +20,20 @@ class Spots
     new(spots: spots)
   end
 
+  def self.assign(vehicles)
+    spots = init
+    vehicles = Types::Vehicles.for(vehicles)
+    spots.assign(vehicles)
+  end
+
   def initialize(spots: spots)
     @spots = spots
   end
 
-  def assign_vehicle(vehicle)
-    location, _ = available_parking_spot_for(vehicle)
-    spot = spots[location]
-    spots[location].merge!(
-      size: spot.fetch(:size),
-      assigned: spot.fetch(:assigned) + [vehicle.to_h],
-      price: spot.fetch(:price) + PRICES_PER_BRAND[vehicle.brand]
-    )
+  def assign(vehicles)
+    vehicles.each do |vehicle|
+      assign_vehicle(vehicle)
+    end
 
     self
   end
@@ -43,6 +45,16 @@ class Spots
   end
 
   private
+
+  def assign_vehicle(vehicle)
+    location, _ = available_parking_spot_for(vehicle)
+    spot = spots[location]
+    spots[location].merge!(
+      size: spot.fetch(:size),
+      assigned: spot.fetch(:assigned) + [vehicle.to_h],
+      price: spot.fetch(:price) + PRICES_PER_BRAND[vehicle.brand]
+    )
+  end
 
   def available_parking_spot_for(vehicle)
     spots.find do |name, spot|

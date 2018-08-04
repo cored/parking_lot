@@ -41,7 +41,7 @@ describe ParkingLot do
       end
 
       context "when special spots are available" do
-        it "assigns cars to an special spot depending on the profit" do
+        xit "assigns cars to an special spot depending on the profit" do
           vehicles = [
             {brand: "Dodge", size: 15},
             {brand: "Mercedes", size: 10},
