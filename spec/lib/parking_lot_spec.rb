@@ -3,9 +3,18 @@ require "spec_helper"
 describe ParkingLot do
   describe ".find_parking_spot" do
     context "when looking for an spot for a vehicle" do
+      let(:vehicles) do
+        [
+          {
+            brand: "Dodge",
+            size: 15
+          }
+        ]
+      end
+
       it "returns the first parking spot in which a vehicle can park if any" do
         expect(
-          ParkingLot.find_parking_spot(vehicles: [{brand: "Dodge", size: 15}])
+          ParkingLot.find_parking_spot(vehicles: vehicles)
         ).to match(
           {
             2 => {
@@ -32,7 +41,7 @@ describe ParkingLot do
       end
 
       context "when special spots are available" do
-        xit "assigns cars to an special spot depending on the profit" do
+        it "assigns cars to an special spot depending on the profit" do
           vehicles = [
             {brand: "Dodge", size: 15},
             {brand: "Mercedes", size: 10},
@@ -44,7 +53,7 @@ describe ParkingLot do
             ParkingLot.find_parking_spot(vehicles: vehicles)
           ).to eql(
             {
-              "M" => {
+              5 => {
                 size: 50,
                 price: 180,
                 assigned: [
@@ -53,10 +62,10 @@ describe ParkingLot do
                   {brand: "Audi", size: 20},
                 ]
               },
-              "A" => {
+              6 => {
                 size: 20,
                 price: 0,
-                assigned: [{brand: "Audi", size: 20}],
+                assigned: [{brand: "Jaguar", size: 45}],
               }
             }
           )
