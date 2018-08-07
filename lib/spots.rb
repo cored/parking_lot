@@ -68,11 +68,11 @@ class Spots
     (inclusion_size < spot_size && spot_size > vehicle.size)
   end
 
-    def total_assigned_size_for(spot)
-      spot.fetch(:assigned).reduce(0) do |total, assigned_vehicle|
-        total += assigned_vehicle.size
-      end
+  def total_assigned_size_for(spot)
+    spot.fetch(:assigned).reduce(0) do |total, assigned_vehicle|
+      total += assigned_vehicle.size
     end
+  end
 
-    attr_reader :spots
+  attr_reader :spots
 end
