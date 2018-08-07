@@ -5,10 +5,17 @@ module Types
     class Vehicle < Dry::Struct
       attribute :brand, Types::String
       attribute :size, Types::Integer
+
+      def to_h
+        {
+          brand: brand,
+          size: size
+        }
+      end
     end
 
     def self.for(vehicles)
-      new(vehicles: vehicles.map { |vehicle| Vehicle.new(vehicle)} )
+      new(vehicles: vehicles.compact.map { |vehicle| Vehicle.new(vehicle)} )
     end
 
     attribute :vehicles, Types::Array.of(Vehicle)

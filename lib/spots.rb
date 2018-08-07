@@ -7,15 +7,50 @@ class Spots
     "Toyota" => 15,
   }
 
-  def self.init
-    spots = 1.upto(10).each.with_object({}) do |location, lot|
-      lot.merge!({
+  class Spot < Dry::Struct
+    Price = Types::Integer.constructor { |brand| PRICES_PER_BRAND[brand] }
+    attribute :location, Types::Integer
+    attribute :size, Types::Integer
+    attribute :price, Price.default(0)
+    attribute :assigned, Types::Array.default([])
+
+    def can_fit?(vehicle)
+      inclusion_size = ( assigned_vehicles_total_size + vehicle.size)
+      (inclusion_size < size && size > vehicle.size)
+    end
+
+    def assign(vehicle)
+      Spot.new(size: size,
+               location: location,
+               price: vehicle.brand,
+               assigned: assigned + [vehicle])
+    end
+
+    def unassigned?
+      assigned.empty?
+    end
+
+    def to_h
+      {
         location => {
-          size: location * 10,
-          price: 0,
-          assigned: [],
-        }
-      })
+          size: size,
+          price: price,
+          assigned: assigned.map(&:to_h),
+        },
+      }
+    end
+
+    private
+
+    def assigned_vehicles_total_size
+      assigned.map(&:size).reduce(0, :+)
+    end
+  end
+
+  def self.init
+    spots = 1.upto(10).map do |location|
+      Spot.new(location: location,
+               size: location * 10)
     end
     new(spots: spots)
   end
@@ -39,26 +74,32 @@ class Spots
   end
 
   def to_h
-    spots.reject do |name, spot|
-      spot.fetch(:assigned).empty?
-    end
+    unassigned_spots.map(&:to_h)
   end
 
   private
 
+  def unassigned_spots
+    spots.reject do |spot|
+      spot.unassigned?
+    end.uniq
+  end
+
   def assign_vehicle(vehicle)
-    location, _ = available_parking_spot_for(vehicle)
-    spot = spots[location]
-    spots[location].merge!(
-      size: spot.fetch(:size),
-      assigned: spot.fetch(:assigned) + [vehicle.to_h],
-      price: spot.fetch(:price) + PRICES_PER_BRAND[vehicle.brand]
-    )
+    spot = available_parking_spot_for(vehicle).assign(vehicle)
+    spots << spot
+    # spot = spots[location]
+    # spots[location].merge!(
+    #   size: spot.fetch(:size),
+    #   assigned: spot.fetch(:assigned) + [vehicle.to_h],
+    #   price: spot.fetch(:price) + PRICES_PER_BRAND[vehicle.brand]
+    # )
   end
 
   def available_parking_spot_for(vehicle)
-    spots.find do |name, spot|
-      able_to_fit?(spot, vehicle)
+    spots.find do |spot|
+      spot.can_fit?(vehicle)
+      # able_to_fit?(spot, vehicle)
     end
   end
 
